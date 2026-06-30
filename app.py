@@ -19,7 +19,9 @@ from PySide6.QtWidgets import (
     QFileDialog, QComboBox, QHBoxLayout
 )
 from PySide6.QtGui import QPixmap
-
+self.btn_export = QPushButton("EKSPORT PACZKI (ZIP + CSV)")
+self.btn_export.clicked.connect(self.export_pack)
+layout.addWidget(self.btn_export)
 
 class MainWindow(QMainWindow):
     def __init__(self):
