@@ -7,6 +7,8 @@ To jest **pierwszy działający interfejs**.
 
 ```python
 import sys
+from core.export_pack import ExportPack
+from core.batch_processor import BatchProcessor
 from core.batch_processor import BatchProcessor
 from ai.vinted_text import VintedTextGenerator
 from ai.catvton_engine import CatVTONEngine
