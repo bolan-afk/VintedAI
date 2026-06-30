@@ -7,6 +7,7 @@ To jest **pierwszy działający interfejs**.
 
 ```python
 import sys
+from ai.tryon import VirtualTryOn
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QLabel, QPushButton,
