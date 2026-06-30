@@ -7,3 +7,8 @@ torchvision
 requests
 rembg
 onnxruntime
+diffusers
+transformers
+accelerate
+safetensors
+xformers
