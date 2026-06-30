@@ -71,7 +71,43 @@ class MainWindow(QMainWindow):
         self.label.setText("Najpierw wybierz zdjęcie!")
         return
 
-        self.label.setText("Generowanie... (następny etap: AI)")
+    self.label.setText("Usuwanie tła...")
+
+    from ai.segmentation import BackgroundRemover
+
+    remover = BackgroundRemover()
+    clean_image = remover.remove_background(self.image_path)
+
+    import os, time
+
+    os.makedirs("cache", exist_ok=True)
+
+    clean_path = f"cache/clean_{int(time.time())}.png"
+    clean_image.save(clean_path)
+
+    self.label.setText("Generowanie modela AI...")
+
+    tryon = VirtualTryOn()
+
+    gender = self.gender.currentText().lower()
+
+    result_img = tryon.generate_model(
+        clean_path,
+        gender=gender,
+        body_type="normalna"
+    )
+
+    output_path = f"exports/final_{int(time.time())}.png"
+    os.makedirs("exports", exist_ok=True)
+
+    result_img.save(output_path)
+
+    from PySide6.QtGui import QPixmap
+
+    self.label.setText("Gotowe!")
+
+    pixmap = QPixmap(output_path)
+    self.image_preview.setPixmap(pixmap.scaledToWidth(400))
 
 
 if __name__ == "__main__":
