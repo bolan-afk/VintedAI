@@ -66,9 +66,9 @@ class MainWindow(QMainWindow):
             self.image_preview.setPixmap(pixmap.scaledToWidth(400))
 
     def generate(self):
-        if not self.image_path:
-            self.label.setText("Najpierw wybierz zdjęcie!")
-            return
+    if not self.image_path:
+        self.label.setText("Najpierw wybierz zdjęcie!")
+        return
 
         self.label.setText("Generowanie... (następny etap: AI)")
 
