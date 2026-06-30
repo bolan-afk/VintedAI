@@ -115,7 +115,29 @@ class MainWindow(QMainWindow):
     self.label.setText("Gotowe (HYBRYDA AI)")
 
     self.image_preview.setPixmap(QPixmap(out_path).scaledToWidth(400))
+text_gen = VintedTextGenerator()
 
+title = text_gen.generate_title(
+    brand="Unknown",
+    item="odzież",
+    style="fashion"
+)
+
+description = text_gen.generate_description(
+    item="odzież",
+    gender=self.gender.currentText().lower()
+)
+
+tags = text_gen.generate_tags("odzież")
+category = text_gen.generate_category("odzież")
+price = text_gen.estimate_price("odzież")
+
+print("\n=== VINTED AI ===")
+print("Tytuł:", title)
+print("Kategoria:", category)
+print("Cena:", price)
+print("Tagi:", tags)
+print("Opis:", description)
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
