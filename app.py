@@ -75,38 +75,36 @@ class MainWindow(QMainWindow):
     self.label.setText("Usuwanie tła...")
 
     remover = BackgroundRemover()
-    clean_image = remover.remove_background(self.image_path)
+    clean = remover.remove_background(self.image_path)
 
     import os, time
 
     os.makedirs("cache", exist_ok=True)
 
     cloth_path = f"cache/cloth_{int(time.time())}.png"
-    clean_image.save(cloth_path)
+    clean.save(cloth_path)
 
-    self.label.setText("Ładowanie modelu AI...")
+    self.label.setText("Generowanie AI (GPU)...")
 
-    engine = LocalTryOnEngine(device="cuda")
-
-    # ⚠️ na tym etapie NIE mamy jeszcze pełnego modelu CatVTON
-    # więc pipeline jest gotowy, ale inference będzie placeholderem
+    engine = CatVTONEngine(device="cuda")
 
     result = engine.generate(
-        person_image=clean_image,
-        clothing_image=clean_image
+        person_image=clean,
+        cloth_image=clean
     )
 
     os.makedirs("exports", exist_ok=True)
 
-    output_path = f"exports/result_{int(time.time())}.png"
-    result.save(output_path)
+    out_path = f"exports/vinted_{int(time.time())}.png"
+    result.save(out_path)
 
     from PySide6.QtGui import QPixmap
 
-    self.label.setText("Gotowe (silnik lokalny aktywny)")
+    self.label.setText("Gotowe!")
 
-    pixmap = QPixmap(output_path)
-    self.image_preview.setPixmap(pixmap.scaledToWidth(400))
+    self.image_preview.setPixmap(
+        QPixmap(out_path).scaledToWidth(400)
+    )
 
 
 if __name__ == "__main__":
