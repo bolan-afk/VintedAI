@@ -7,7 +7,8 @@ To jest **pierwszy działający interfejs**.
 
 ```python
 import sys
-from ai.tryon import VirtualTryOn
+from ai.local_tryon import LocalTryOnEngine
+from ai.segmentation import BackgroundRemover
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QLabel, QPushButton,
@@ -73,8 +74,6 @@ class MainWindow(QMainWindow):
 
     self.label.setText("Usuwanie tła...")
 
-    from ai.segmentation import BackgroundRemover
-
     remover = BackgroundRemover()
     clean_image = remover.remove_background(self.image_path)
 
@@ -82,29 +81,29 @@ class MainWindow(QMainWindow):
 
     os.makedirs("cache", exist_ok=True)
 
-    clean_path = f"cache/clean_{int(time.time())}.png"
-    clean_image.save(clean_path)
+    cloth_path = f"cache/cloth_{int(time.time())}.png"
+    clean_image.save(cloth_path)
 
-    self.label.setText("Generowanie modela AI...")
+    self.label.setText("Ładowanie modelu AI...")
 
-    tryon = VirtualTryOn()
+    engine = LocalTryOnEngine(device="cuda")
 
-    gender = self.gender.currentText().lower()
+    # ⚠️ na tym etapie NIE mamy jeszcze pełnego modelu CatVTON
+    # więc pipeline jest gotowy, ale inference będzie placeholderem
 
-    result_img = tryon.generate_model(
-        clean_path,
-        gender=gender,
-        body_type="normalna"
+    result = engine.generate(
+        person_image=clean_image,
+        clothing_image=clean_image
     )
 
-    output_path = f"exports/final_{int(time.time())}.png"
     os.makedirs("exports", exist_ok=True)
 
-    result_img.save(output_path)
+    output_path = f"exports/result_{int(time.time())}.png"
+    result.save(output_path)
 
     from PySide6.QtGui import QPixmap
 
-    self.label.setText("Gotowe!")
+    self.label.setText("Gotowe (silnik lokalny aktywny)")
 
     pixmap = QPixmap(output_path)
     self.image_preview.setPixmap(pixmap.scaledToWidth(400))
