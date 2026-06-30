@@ -29,6 +29,26 @@ class MainWindow(QMainWindow):
         self.image_path = None
 
         self.init_ui()
+        def run_batch(self):
+    from PySide6.QtWidgets import QFileDialog
+
+    files, _ = QFileDialog.getOpenFileNames(
+        self,
+        "Wybierz zdjęcia",
+        "",
+        "Images (*.png *.jpg *.jpeg)"
+    )
+
+    if not files:
+        return
+
+    self.label.setText("Batch processing...")
+
+    processor = BatchProcessor(device="cuda")
+
+    results = processor.process_batch(files)
+
+    self.label.setText(f"Gotowe! {len(results)} ofert wygenerowanych.")
 
     def init_ui(self):
         layout = QVBoxLayout()
