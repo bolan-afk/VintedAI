@@ -69,43 +69,51 @@ class MainWindow(QMainWindow):
 
     def generate(self):
     if not self.image_path:
-        self.label.setText("Najpierw wybierz zdjęcie!")
+        self.label.setText("Dodaj zdjęcie!")
         return
 
-    self.label.setText("Usuwanie tła...")
-
-    remover = BackgroundRemover()
-    clean = remover.remove_background(self.image_path)
+    from ai.segmentation import BackgroundRemover
+    from ai.sam2_segment import SAM2Segmenter
+    from ai.catvton_engine import CatVTONEngine
+    from ai.sdxl_enhancer import SDXLEnhancer
 
     import os, time
+
+    self.label.setText("1/4 Usuwanie tła...")
+
+    remover = BackgroundRemover()
+    cloth = remover.remove_background(self.image_path)
 
     os.makedirs("cache", exist_ok=True)
 
     cloth_path = f"cache/cloth_{int(time.time())}.png"
-    clean.save(cloth_path)
+    cloth.save(cloth_path)
 
-    self.label.setText("Generowanie AI (GPU)...")
+    self.label.setText("2/4 Segmentacja SAM2...")
 
-    engine = CatVTONEngine(device="cuda")
+    sam = SAM2Segmenter()
+    mask = sam.get_mask(cloth)
 
-    result = engine.generate(
-        person_image=clean,
-        cloth_image=clean
-    )
+    self.label.setText("3/4 CatVTON generuje modela...")
 
+    vton = CatVTONEngine(device="cuda")
+    result = vton.generate(cloth, cloth, mask)
+
+    self.label.setText("4/4 Ulepszanie jakości...")
+
+    enhancer = SDXLEnhancer(device="cuda")
+    final = enhancer.enhance(result)
+
+    out_path = f"exports/final_{int(time.time())}.png"
     os.makedirs("exports", exist_ok=True)
 
-    out_path = f"exports/vinted_{int(time.time())}.png"
-    result.save(out_path)
+    final.save(out_path)
 
     from PySide6.QtGui import QPixmap
 
-    self.label.setText("Gotowe!")
+    self.label.setText("Gotowe (HYBRYDA AI)")
 
-    self.image_preview.setPixmap(
-        QPixmap(out_path).scaledToWidth(400)
-    )
-
+    self.image_preview.setPixmap(QPixmap(out_path).scaledToWidth(400))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
