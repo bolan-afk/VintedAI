@@ -7,7 +7,7 @@ To jest **pierwszy działający interfejs**.
 
 ```python
 import sys
-from ai.local_tryon import LocalTryOnEngine
+from ai.catvton_engine import CatVTONEngine
 from ai.segmentation import BackgroundRemover
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
