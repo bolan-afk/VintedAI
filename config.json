@@ -1,0 +1,8 @@
+{
+  "app_name": "VintedAI",
+  "language": "pl",
+  "theme": "dark",
+  "output_dir": "exports",
+  "device": "cpu",
+  "image_size": 1024
+}
