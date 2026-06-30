@@ -7,6 +7,7 @@ To jest **pierwszy działający interfejs**.
 
 ```python
 import sys
+from core.batch_processor import BatchProcessor
 from ai.vinted_text import VintedTextGenerator
 from ai.catvton_engine import CatVTONEngine
 from ai.segmentation import BackgroundRemover
