@@ -58,14 +58,29 @@ class BatchProcessor:
         return img_path
 
     def process_batch(self, image_paths: list):
-        results = []
+    results = []
 
-        for i, path in enumerate(image_paths):
-            try:
-                result = self.process_single(path, i)
-                results.append(result)
+    for i, path in enumerate(image_paths):
 
-            except Exception as e:
-                print(f"Błąd [{i}]: {e}")
+        cloth = self.remover.remove_background(path)
+        mask = self.sam.get_mask(cloth)
+        result = self.vton.generate(cloth, cloth, mask)
+        final = self.enhancer.enhance(result)
 
-        return results
+        title = self.text.generate_title(item="ubranie")
+        desc = self.text.generate_description(item="ubranie")
+        tags = self.text.generate_tags("ubranie")
+        price = self.text.estimate_price("ubranie")
+
+        img_path = f"exports/batch/item_{i}.png"
+        final.save(img_path)
+
+        results.append({
+            "image": img_path,
+            "title": title,
+            "description": desc,
+            "tags": tags,
+            "price": price
+        })
+
+    return results
