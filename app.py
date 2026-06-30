@@ -24,6 +24,29 @@ self.btn_export.clicked.connect(self.export_pack)
 layout.addWidget(self.btn_export)
 
 class MainWindow(QMainWindow):
+    def export_pack(self):
+
+    from PySide6.QtWidgets import QFileDialog
+
+    files, _ = QFileDialog.getOpenFileNames(
+        self,
+        "Wybierz obrazy batch",
+        "",
+        "Images (*.png *.jpg *.jpeg)"
+    )
+
+    if not files:
+        return
+
+    self.label.setText("Generowanie paczki...")
+
+    processor = BatchProcessor(device="cuda")
+    results = processor.process_batch(files)
+
+    exporter = ExportPack()
+    zip_path = exporter.export(results)
+
+    self.label.setText(f"Gotowe! Paczka: {zip_path}")
     def __init__(self):
         super().__init__()
 
