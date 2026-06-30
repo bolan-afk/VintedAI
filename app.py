@@ -89,6 +89,10 @@ class MainWindow(QMainWindow):
             pixmap = QPixmap(file_path)
             self.image_preview.setPixmap(pixmap.scaledToWidth(400))
 
+    self.btn_batch = QPushButton("BATCH GENERUJ (wiele zdjęć)")
+self.btn_batch.clicked.connect(self.run_batch)
+layout.addWidget(self.btn_batch)
+
     def generate(self):
     if not self.image_path:
         self.label.setText("Dodaj zdjęcie!")
